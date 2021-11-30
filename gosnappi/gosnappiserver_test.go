@@ -75,26 +75,6 @@ func init() {
 	StartHttpServer()
 }
 
-func config1(api gosnappi.GosnappiApi) gosnappi.Config {
-	config := api.NewConfig()
-	port1 := config.Ports().Add()
-	port2 := config.Ports().Add()
-	port1.SetName("port1")
-	port1.SetLocation("location1")
-	port2.SetName("port2")
-	port2.SetLocation("location2")
-	f1 := config.Flows().Add().SetName("f1")
-	f2 := config.Flows().Add().SetName("f2")
-	f1.TxRx().Port().SetTxName(port1.Name())
-	f1.TxRx().Port().SetRxName(port2.Name())
-	f1.Metrics().SetEnable(true)
-	f2.TxRx().Port().SetTxName(port1.Name())
-	f2.TxRx().Port().SetTxName(port2.Name())
-	f2.Metrics().SetEnable(true)
-	f1.Rate()
-	return config
-}
-
 func TestSnappiServer(t *testing.T) {
 	api := gosnappi.NewApi()
 	api.NewHttpTransport().SetLocation("http://127.0.0.1:50071")

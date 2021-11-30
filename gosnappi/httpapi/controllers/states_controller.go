@@ -46,11 +46,11 @@ func (ctrl *statesController) GetStates(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)

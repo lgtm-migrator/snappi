@@ -43,15 +43,15 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 	}
 	result := ctrl.handler.SetConfig(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteAnyResponse(w, 200, result.StatusCode200())
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -68,11 +68,11 @@ func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Re
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)

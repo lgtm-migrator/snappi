@@ -48,15 +48,15 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 	}
 	result := ctrl.handler.SetTransmitState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteAnyResponse(w, 200, result.StatusCode200())
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -80,15 +80,15 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 	}
 	result := ctrl.handler.SetLinkState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteAnyResponse(w, 200, result.StatusCode200())
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -112,15 +112,15 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 	}
 	result := ctrl.handler.SetCaptureState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteAnyResponse(w, 200, result.StatusCode200())
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -148,11 +148,11 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -176,15 +176,15 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 	}
 	result := ctrl.handler.SetRouteState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteAnyResponse(w, 200, result.StatusCode200())
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -212,11 +212,11 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
@@ -240,15 +240,15 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 	}
 	result := ctrl.handler.SetProtocolState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteAnyResponse(w, 200, result.StatusCode200())
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 		return
 	}
 	if result.HasStatusCode400() {
-		httpapi.WriteAnyResponse(w, 400, result.StatusCode400())
+		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
 	}
 	if result.HasStatusCode500() {
-		httpapi.WriteAnyResponse(w, 500, result.StatusCode500())
+		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
