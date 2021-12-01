@@ -1,89 +1,89 @@
-name: cicd
-
-on: [push]
-
-jobs:
-  cicd:
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      matrix:
-        python-version: [2.7, 3.6]
-
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-          submodules: recursive
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Setup Go and protoc
-        run: |
-          python do.py setup_ext
-      - name: Install dependencies
-        run: |
-          python do.py setup
-          python do.py init
-      - name: Build distribution
-        run: |
-          python do.py dist
-      - name: Install package on clean env
-        run: |
-          rm -rf .env
-          python do.py setup
-          python do.py install
-      - name: Commit go pkg
-        id: get_sha
-        if: ${{ matrix.python-version == 3.6 }}
-        run: |
-          git config user.name "Github Actions Bot"
-          git config user.email "actions@github.com"
-          git add --force gosnappi/\*
-          if git status --porcelain | grep .
-            then
-              git commit -m "Update auto generated go snappi" 
-              git push
-            else
-              echo "No change in auto generated go snappi"
-          fi
-          echo "::set-output name=sha::$(git rev-parse HEAD)"
-      - name: Run tests
-        run: |
-          sudo python do.py test
-      - name: Get package version
-        id: get_version
-        run: |
-          echo "::set-output name=version::v$(python do.py version)"
-      - name: Check tag for current version
-        uses: mukunku/tag-exists-action@v1.0.0
-        id: check_tag
-        with:
-          tag: ${{ steps.get_version.outputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish package
-        if: steps.check_tag.outputs.exists == 'false' && matrix.python-version == '3.6'
-        run: |
-          PYPI_USERNAME=${{ secrets.PYPI_USERNAME }} PYPI_PASSWORD=${{ secrets.PYPI_PASSWORD }} python do.py release
-      - name: Create release and publish artifacts
-        if: steps.check_tag.outputs.exists == 'false' && matrix.python-version == '3.6'
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "dist/*,models-release,*.proto"
-          tag: ${{ steps.get_version.outputs.version }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create tag for gosnappi
-        if: steps.check_tag.outputs.exists == 'false' && matrix.python-version == '3.6'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            github.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/gosnappi/${{ steps.get_version.outputs.version }}",
-              sha: "${{ steps.get_sha.outputs.sha }}"
-            })
+#name: cicd
+#
+#on: [push]
+#
+#jobs:
+#  cicd:
+#    runs-on: ubuntu-latest
+#    strategy:
+#      max-parallel: 1
+#      matrix:
+#        python-version: [2.7, 3.6]
+#
+#    steps:
+#      - name: Checkout source
+#        uses: actions/checkout@v2
+#        with:
+#          ref: ${{ github.head_ref }}
+#          submodules: recursive
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Setup Go and protoc
+#        run: |
+#          python do.py setup_ext
+#      - name: Install dependencies
+#        run: |
+#          python do.py setup
+#          python do.py init
+#      - name: Build distribution
+#        run: |
+#          python do.py dist
+#      - name: Install package on clean env
+#        run: |
+#          rm -rf .env
+#          python do.py setup
+#          python do.py install
+#      - name: Commit go pkg
+#        id: get_sha
+#        if: ${{ matrix.python-version == 3.6 }}
+#        run: |
+#          git config user.name "Github Actions Bot"
+#          git config user.email "actions@github.com"
+#          git add --force gosnappi/\*
+#          if git status --porcelain | grep .
+#            then
+#              git commit -m "Update auto generated go snappi"
+#              git push
+#            else
+#              echo "No change in auto generated go snappi"
+#          fi
+#          echo "::set-output name=sha::$(git rev-parse HEAD)"
+#      - name: Run tests
+#        run: |
+#          sudo python do.py test
+#      - name: Get package version
+#        id: get_version
+#        run: |
+#          echo "::set-output name=version::v$(python do.py version)"
+#      - name: Check tag for current version
+#        uses: mukunku/tag-exists-action@v1.0.0
+#        id: check_tag
+#        with:
+#          tag: ${{ steps.get_version.outputs.version }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Publish package
+#        if: steps.check_tag.outputs.exists == 'false' && matrix.python-version == '3.6'
+#        run: |
+#          PYPI_USERNAME=${{ secrets.PYPI_USERNAME }} PYPI_PASSWORD=${{ secrets.PYPI_PASSWORD }} python do.py release
+#      - name: Create release and publish artifacts
+#        if: steps.check_tag.outputs.exists == 'false' && matrix.python-version == '3.6'
+#        uses: ncipollo/release-action@v1
+#        with:
+#          artifacts: "dist/*,models-release,*.proto"
+#          tag: ${{ steps.get_version.outputs.version }}
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Create tag for gosnappi
+#        if: steps.check_tag.outputs.exists == 'false' && matrix.python-version == '3.6'
+#        uses: actions/github-script@v3
+#        with:
+#          github-token: ${{ github.token }}
+#          script: |
+#            github.git.createRef({
+#              owner: context.repo.owner,
+#              repo: context.repo.repo,
+#              ref: "refs/tags/gosnappi/${{ steps.get_version.outputs.version }}",
+#              sha: "${{ steps.get_sha.outputs.sha }}"
+#            })
