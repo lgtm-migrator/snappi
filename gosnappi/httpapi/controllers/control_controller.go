@@ -2,6 +2,7 @@
 package controllers
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -37,14 +38,22 @@ Description: Updates the state of configuration resources on the traffic generat
 func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.TransmitState
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewTransmitState()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSetTransmitState400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSetTransmitState400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSetTransmitState400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SetTransmitState(item, r)
 	if result.HasStatusCode200() {
@@ -62,6 +71,18 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
 }
 
+func (ctrl *controlController) responseSetTransmitState400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetTransmitStateResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseSetTransmitState500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetTransmitStateResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
+}
+
 /*
 SetLinkState: POST /control/link
 Description: Updates the state of configuration resources on the traffic generator.
@@ -69,14 +90,22 @@ Description: Updates the state of configuration resources on the traffic generat
 func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.LinkState
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewLinkState()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSetLinkState400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSetLinkState400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSetLinkState400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SetLinkState(item, r)
 	if result.HasStatusCode200() {
@@ -94,6 +123,18 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
 }
 
+func (ctrl *controlController) responseSetLinkState400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetLinkStateResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseSetLinkState500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetLinkStateResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
+}
+
 /*
 SetCaptureState: POST /control/capture
 Description: Updates the state of configuration resources on the traffic generator.
@@ -101,14 +142,22 @@ Description: Updates the state of configuration resources on the traffic generat
 func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.CaptureState
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewCaptureState()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSetCaptureState400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSetCaptureState400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSetCaptureState400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SetCaptureState(item, r)
 	if result.HasStatusCode200() {
@@ -126,6 +175,18 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
 }
 
+func (ctrl *controlController) responseSetCaptureState400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetCaptureStateResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseSetCaptureState500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetCaptureStateResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
+}
+
 /*
 UpdateFlows: POST /control/flows
 Description: Updates flow properties without disruption of transmit state.
@@ -133,14 +194,22 @@ Description: Updates flow properties without disruption of transmit state.
 func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.FlowsUpdate
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewFlowsUpdate()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseUpdateFlows400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseUpdateFlows400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseUpdateFlows400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.UpdateFlows(item, r)
 	if result.HasStatusCode200() {
@@ -158,6 +227,18 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
 }
 
+func (ctrl *controlController) responseUpdateFlows400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewUpdateFlowsResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseUpdateFlows500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewUpdateFlowsResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
+}
+
 /*
 SetRouteState: POST /control/routes
 Description: Updates the state of configuration resources on the traffic generator.
@@ -165,14 +246,22 @@ Description: Updates the state of configuration resources on the traffic generat
 func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.RouteState
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewRouteState()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSetRouteState400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSetRouteState400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSetRouteState400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SetRouteState(item, r)
 	if result.HasStatusCode200() {
@@ -190,6 +279,18 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
 }
 
+func (ctrl *controlController) responseSetRouteState400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetRouteStateResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseSetRouteState500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetRouteStateResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
+}
+
 /*
 SendPing: POST /control/ping
 Description: API to send an IPv4 and/or IPv6 ICMP Echo Request(s) between endpoints. For each endpoint 1 ping packet will be sent and API shall wait for ping response to either be successful or timeout. The API wait timeout for each request is 300ms.
@@ -197,14 +298,22 @@ Description: API to send an IPv4 and/or IPv6 ICMP Echo Request(s) between endpoi
 func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.PingRequest
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewPingRequest()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSendPing400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSendPing400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSendPing400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SendPing(item, r)
 	if result.HasStatusCode200() {
@@ -222,6 +331,18 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
 }
 
+func (ctrl *controlController) responseSendPing400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSendPingResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseSendPing500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSendPingResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
+}
+
 /*
 SetProtocolState: POST /control/protocols
 Description: Sets all configured protocols to `start` or `stop` state.
@@ -229,14 +350,22 @@ Description: Sets all configured protocols to `start` or `stop` state.
 func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.ProtocolState
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewProtocolState()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSetProtocolState400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSetProtocolState400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSetProtocolState400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SetProtocolState(item, r)
 	if result.HasStatusCode200() {
@@ -252,4 +381,16 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+}
+
+func (ctrl *controlController) responseSetProtocolState400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetProtocolStateResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *controlController) responseSetProtocolState500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetProtocolStateResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 }

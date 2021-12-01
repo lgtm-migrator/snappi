@@ -2,6 +2,7 @@
 package controllers
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -31,14 +32,22 @@ Description:
 func (ctrl *metricsController) GetMetrics(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.MetricsRequest
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewMetricsRequest()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseGetMetrics400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseGetMetrics400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseGetMetrics400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.GetMetrics(item, r)
 	if result.HasStatusCode200() {
@@ -54,4 +63,16 @@ func (ctrl *metricsController) GetMetrics(w http.ResponseWriter, r *http.Request
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+}
+
+func (ctrl *metricsController) responseGetMetrics400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewGetMetricsResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *metricsController) responseGetMetrics500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewGetMetricsResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 }

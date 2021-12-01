@@ -2,6 +2,7 @@
 package controllers
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -32,14 +33,22 @@ Description: Sets configuration resources on the traffic generator.
 func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Request) {
 	var item gosnappi.Config
 	if r.Body != nil {
-		body, _ := ioutil.ReadAll(r.Body)
+		body, readError := ioutil.ReadAll(r.Body)
 		if body != nil {
 			item = gosnappi.NewConfig()
 			err := item.FromJson(string(body))
 			if err != nil {
-				item = nil
+				ctrl.responseSetConfig400(w, err)
+				return
 			}
+		} else {
+			ctrl.responseSetConfig400(w, readError)
+			return
 		}
+	} else {
+		bodyError := errors.New("Request do not have any body")
+		ctrl.responseSetConfig400(w, bodyError)
+		return
 	}
 	result := ctrl.handler.SetConfig(item, r)
 	if result.HasStatusCode200() {
@@ -55,6 +64,18 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+}
+
+func (ctrl *configurationController) responseSetConfig400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetConfigResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *configurationController) responseSetConfig500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewSetConfigResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 }
 
 /*
@@ -76,4 +97,16 @@ func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Re
 		return
 	}
 	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+}
+
+func (ctrl *configurationController) responseGetConfig400(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewGetConfigResponse()
+	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+}
+
+func (ctrl *configurationController) responseGetConfig500(w http.ResponseWriter, rsp_err error) {
+	result := gosnappi.NewGetConfigResponse()
+	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
+	httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 }
