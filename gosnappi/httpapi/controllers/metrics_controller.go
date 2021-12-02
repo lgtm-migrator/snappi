@@ -68,7 +68,7 @@ func (ctrl *metricsController) GetMetrics(w http.ResponseWriter, r *http.Request
 func (ctrl *metricsController) responseGetMetrics400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewGetMetricsResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *metricsController) responseGetMetrics500(w http.ResponseWriter, rsp_err error) {

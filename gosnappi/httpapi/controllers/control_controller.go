@@ -9,6 +9,7 @@ import (
 	gosnappi "github.com/open-traffic-generator/snappi/gosnappi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi/interfaces"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type controlController struct {
@@ -57,9 +58,20 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 	}
 	result := ctrl.handler.SetTransmitState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		opts := protojson.MarshalOptions{
+			UseProtoNames:   true,
+			AllowPartial:    true,
+			EmitUnpopulated: true,
+			Indent:          "  ",
+		}
+		data, err := opts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetTransmitState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
 		return
 	}
+
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -74,7 +86,7 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 func (ctrl *controlController) responseSetTransmitState400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetTransmitStateResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseSetTransmitState500(w http.ResponseWriter, rsp_err error) {
@@ -109,9 +121,20 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 	}
 	result := ctrl.handler.SetLinkState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		opts := protojson.MarshalOptions{
+			UseProtoNames:   true,
+			AllowPartial:    true,
+			EmitUnpopulated: true,
+			Indent:          "  ",
+		}
+		data, err := opts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetLinkState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
 		return
 	}
+
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -126,7 +149,7 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 func (ctrl *controlController) responseSetLinkState400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetLinkStateResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseSetLinkState500(w http.ResponseWriter, rsp_err error) {
@@ -161,9 +184,20 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 	}
 	result := ctrl.handler.SetCaptureState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		opts := protojson.MarshalOptions{
+			UseProtoNames:   true,
+			AllowPartial:    true,
+			EmitUnpopulated: true,
+			Indent:          "  ",
+		}
+		data, err := opts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetCaptureState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
 		return
 	}
+
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -178,7 +212,7 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 func (ctrl *controlController) responseSetCaptureState400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetCaptureStateResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseSetCaptureState500(w http.ResponseWriter, rsp_err error) {
@@ -230,7 +264,7 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 func (ctrl *controlController) responseUpdateFlows400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewUpdateFlowsResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseUpdateFlows500(w http.ResponseWriter, rsp_err error) {
@@ -265,9 +299,20 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 	}
 	result := ctrl.handler.SetRouteState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		opts := protojson.MarshalOptions{
+			UseProtoNames:   true,
+			AllowPartial:    true,
+			EmitUnpopulated: true,
+			Indent:          "  ",
+		}
+		data, err := opts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetRouteState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
 		return
 	}
+
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -282,7 +327,7 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 func (ctrl *controlController) responseSetRouteState400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetRouteStateResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseSetRouteState500(w http.ResponseWriter, rsp_err error) {
@@ -334,7 +379,7 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 func (ctrl *controlController) responseSendPing400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSendPingResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseSendPing500(w http.ResponseWriter, rsp_err error) {
@@ -369,9 +414,20 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 	}
 	result := ctrl.handler.SetProtocolState(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		opts := protojson.MarshalOptions{
+			UseProtoNames:   true,
+			AllowPartial:    true,
+			EmitUnpopulated: true,
+			Indent:          "  ",
+		}
+		data, err := opts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetProtocolState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
 		return
 	}
+
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -386,7 +442,7 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 func (ctrl *controlController) responseSetProtocolState400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetProtocolStateResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *controlController) responseSetProtocolState500(w http.ResponseWriter, rsp_err error) {

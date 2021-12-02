@@ -9,6 +9,7 @@ import (
 	gosnappi "github.com/open-traffic-generator/snappi/gosnappi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi/interfaces"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type configurationController struct {
@@ -52,9 +53,20 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 	}
 	result := ctrl.handler.SetConfig(item, r)
 	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		opts := protojson.MarshalOptions{
+			UseProtoNames:   true,
+			AllowPartial:    true,
+			EmitUnpopulated: true,
+			Indent:          "  ",
+		}
+		data, err := opts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetConfig400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
 		return
 	}
+
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -69,7 +81,7 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 func (ctrl *configurationController) responseSetConfig400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetConfigResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *configurationController) responseSetConfig500(w http.ResponseWriter, rsp_err error) {
@@ -102,7 +114,7 @@ func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Re
 func (ctrl *configurationController) responseGetConfig400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewGetConfigResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *configurationController) responseGetConfig500(w http.ResponseWriter, rsp_err error) {

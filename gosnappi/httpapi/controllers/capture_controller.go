@@ -68,7 +68,7 @@ func (ctrl *captureController) GetCapture(w http.ResponseWriter, r *http.Request
 func (ctrl *captureController) responseGetCapture400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewGetCaptureResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *captureController) responseGetCapture500(w http.ResponseWriter, rsp_err error) {

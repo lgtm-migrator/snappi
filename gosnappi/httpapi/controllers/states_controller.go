@@ -68,7 +68,7 @@ func (ctrl *statesController) GetStates(w http.ResponseWriter, r *http.Request) 
 func (ctrl *statesController) responseGetStates400(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewGetStatesResponse()
 	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	httpapi.WriteJSONResponse(w, 400, result.StatusCode500())
+	httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 }
 
 func (ctrl *statesController) responseGetStates500(w http.ResponseWriter, rsp_err error) {
