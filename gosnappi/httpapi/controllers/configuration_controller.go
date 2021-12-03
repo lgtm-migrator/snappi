@@ -27,6 +27,13 @@ func (ctrl *configurationController) Routes() []httpapi.Route {
 	}
 }
 
+var configurationMrlOpts = protojson.MarshalOptions{
+	UseProtoNames:   true,
+	AllowPartial:    true,
+	EmitUnpopulated: true,
+	Indent:          "  ",
+}
+
 /*
 SetConfig: POST /config
 Description: Sets configuration resources on the traffic generator.
@@ -52,21 +59,6 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 		return
 	}
 	result := ctrl.handler.SetConfig(item, r)
-	if result.HasStatusCode200() {
-		opts := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			AllowPartial:    true,
-			EmitUnpopulated: true,
-			Indent:          "  ",
-		}
-		data, err := opts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetConfig400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-		return
-	}
-
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -75,7 +67,12 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	data, err := configurationMrlOpts.Marshal(result.StatusCode200().Msg())
+	if err != nil {
+		ctrl.responseSetConfig400(w, err)
+	}
+	httpapi.WriteCustomJSONResponse(w, 200, data)
+
 }
 
 func (ctrl *configurationController) responseSetConfig400(w http.ResponseWriter, rsp_err error) {
@@ -96,10 +93,6 @@ Description:
 */
 func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Request) {
 	result := ctrl.handler.GetConfig(r)
-	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
-		return
-	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -108,7 +101,7 @@ func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Re
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 }
 
 func (ctrl *configurationController) responseGetConfig400(w http.ResponseWriter, rsp_err error) {

@@ -9,6 +9,7 @@ import (
 	gosnappi "github.com/open-traffic-generator/snappi/gosnappi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi/interfaces"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type captureController struct {
@@ -23,6 +24,13 @@ func (ctrl *captureController) Routes() []httpapi.Route {
 	return []httpapi.Route{
 		{Path: "/results/capture", Method: "POST", Name: "GetCapture", Handler: ctrl.GetCapture},
 	}
+}
+
+var captureMrlOpts = protojson.MarshalOptions{
+	UseProtoNames:   true,
+	AllowPartial:    true,
+	EmitUnpopulated: true,
+	Indent:          "  ",
 }
 
 /*
@@ -50,10 +58,6 @@ func (ctrl *captureController) GetCapture(w http.ResponseWriter, r *http.Request
 		return
 	}
 	result := ctrl.handler.GetCapture(item, r)
-	if result.HasStatusCode200() {
-		httpapi.WriteByteResponse(w, 200, result.StatusCode200())
-		return
-	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -62,7 +66,7 @@ func (ctrl *captureController) GetCapture(w http.ResponseWriter, r *http.Request
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	httpapi.WriteByteResponse(w, 200, result.StatusCode200())
 }
 
 func (ctrl *captureController) responseGetCapture400(w http.ResponseWriter, rsp_err error) {

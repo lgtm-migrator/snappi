@@ -9,6 +9,7 @@ import (
 	gosnappi "github.com/open-traffic-generator/snappi/gosnappi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi"
 	"github.com/open-traffic-generator/snappi/gosnappi/httpapi/interfaces"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type statesController struct {
@@ -23,6 +24,13 @@ func (ctrl *statesController) Routes() []httpapi.Route {
 	return []httpapi.Route{
 		{Path: "/results/states", Method: "POST", Name: "GetStates", Handler: ctrl.GetStates},
 	}
+}
+
+var statesMrlOpts = protojson.MarshalOptions{
+	UseProtoNames:   true,
+	AllowPartial:    true,
+	EmitUnpopulated: true,
+	Indent:          "  ",
 }
 
 /*
@@ -50,10 +58,6 @@ func (ctrl *statesController) GetStates(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	result := ctrl.handler.GetStates(item, r)
-	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
-		return
-	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -62,7 +66,7 @@ func (ctrl *statesController) GetStates(w http.ResponseWriter, r *http.Request) 
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 }
 
 func (ctrl *statesController) responseGetStates400(w http.ResponseWriter, rsp_err error) {

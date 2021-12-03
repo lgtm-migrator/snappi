@@ -32,6 +32,13 @@ func (ctrl *controlController) Routes() []httpapi.Route {
 	}
 }
 
+var controlMrlOpts = protojson.MarshalOptions{
+	UseProtoNames:   true,
+	AllowPartial:    true,
+	EmitUnpopulated: true,
+	Indent:          "  ",
+}
+
 /*
 SetTransmitState: POST /control/transmit
 Description: Updates the state of configuration resources on the traffic generator.
@@ -57,21 +64,6 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 		return
 	}
 	result := ctrl.handler.SetTransmitState(item, r)
-	if result.HasStatusCode200() {
-		opts := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			AllowPartial:    true,
-			EmitUnpopulated: true,
-			Indent:          "  ",
-		}
-		data, err := opts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetTransmitState400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-		return
-	}
-
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -80,7 +72,12 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+	if err != nil {
+		ctrl.responseSetTransmitState400(w, err)
+	}
+	httpapi.WriteCustomJSONResponse(w, 200, data)
+
 }
 
 func (ctrl *controlController) responseSetTransmitState400(w http.ResponseWriter, rsp_err error) {
@@ -120,21 +117,6 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	result := ctrl.handler.SetLinkState(item, r)
-	if result.HasStatusCode200() {
-		opts := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			AllowPartial:    true,
-			EmitUnpopulated: true,
-			Indent:          "  ",
-		}
-		data, err := opts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetLinkState400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-		return
-	}
-
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -143,7 +125,12 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+	if err != nil {
+		ctrl.responseSetLinkState400(w, err)
+	}
+	httpapi.WriteCustomJSONResponse(w, 200, data)
+
 }
 
 func (ctrl *controlController) responseSetLinkState400(w http.ResponseWriter, rsp_err error) {
@@ -183,21 +170,6 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 		return
 	}
 	result := ctrl.handler.SetCaptureState(item, r)
-	if result.HasStatusCode200() {
-		opts := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			AllowPartial:    true,
-			EmitUnpopulated: true,
-			Indent:          "  ",
-		}
-		data, err := opts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetCaptureState400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-		return
-	}
-
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -206,7 +178,12 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+	if err != nil {
+		ctrl.responseSetCaptureState400(w, err)
+	}
+	httpapi.WriteCustomJSONResponse(w, 200, data)
+
 }
 
 func (ctrl *controlController) responseSetCaptureState400(w http.ResponseWriter, rsp_err error) {
@@ -246,10 +223,6 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	result := ctrl.handler.UpdateFlows(item, r)
-	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
-		return
-	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -258,7 +231,7 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 }
 
 func (ctrl *controlController) responseUpdateFlows400(w http.ResponseWriter, rsp_err error) {
@@ -298,21 +271,6 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	result := ctrl.handler.SetRouteState(item, r)
-	if result.HasStatusCode200() {
-		opts := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			AllowPartial:    true,
-			EmitUnpopulated: true,
-			Indent:          "  ",
-		}
-		data, err := opts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetRouteState400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-		return
-	}
-
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -321,7 +279,12 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+	if err != nil {
+		ctrl.responseSetRouteState400(w, err)
+	}
+	httpapi.WriteCustomJSONResponse(w, 200, data)
+
 }
 
 func (ctrl *controlController) responseSetRouteState400(w http.ResponseWriter, rsp_err error) {
@@ -361,10 +324,6 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	result := ctrl.handler.SendPing(item, r)
-	if result.HasStatusCode200() {
-		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
-		return
-	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -373,7 +332,7 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
 }
 
 func (ctrl *controlController) responseSendPing400(w http.ResponseWriter, rsp_err error) {
@@ -413,21 +372,6 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 		return
 	}
 	result := ctrl.handler.SetProtocolState(item, r)
-	if result.HasStatusCode200() {
-		opts := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			AllowPartial:    true,
-			EmitUnpopulated: true,
-			Indent:          "  ",
-		}
-		data, err := opts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetProtocolState400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-		return
-	}
-
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -436,7 +380,12 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteDefaultResponse(w, http.StatusInternalServerError)
+	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+	if err != nil {
+		ctrl.responseSetProtocolState400(w, err)
+	}
+	httpapi.WriteCustomJSONResponse(w, 200, data)
+
 }
 
 func (ctrl *controlController) responseSetProtocolState400(w http.ResponseWriter, rsp_err error) {
