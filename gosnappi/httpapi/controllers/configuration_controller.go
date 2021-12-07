@@ -55,10 +55,19 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetConfig400(w, bodyError)
+		ctrl.responseSetConfig500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SetConfig(item, r)
+	if result.HasStatusCode200() {
+		data, err := configurationMrlOpts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetConfig400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
+
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -67,12 +76,7 @@ func (ctrl *configurationController) SetConfig(w http.ResponseWriter, r *http.Re
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	data, err := configurationMrlOpts.Marshal(result.StatusCode200().Msg())
-	if err != nil {
-		ctrl.responseSetConfig400(w, err)
-	}
-	httpapi.WriteCustomJSONResponse(w, 200, data)
-
+	ctrl.responseSetConfig500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *configurationController) responseSetConfig400(w http.ResponseWriter, rsp_err error) {
@@ -93,6 +97,10 @@ Description:
 */
 func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Request) {
 	result := ctrl.handler.GetConfig(r)
+	if result.HasStatusCode200() {
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -101,7 +109,7 @@ func (ctrl *configurationController) GetConfig(w http.ResponseWriter, r *http.Re
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+	ctrl.responseGetConfig500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *configurationController) responseGetConfig400(w http.ResponseWriter, rsp_err error) {

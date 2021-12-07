@@ -60,10 +60,19 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetTransmitState400(w, bodyError)
+		ctrl.responseSetTransmitState500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SetTransmitState(item, r)
+	if result.HasStatusCode200() {
+		data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetTransmitState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
+
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -72,12 +81,7 @@ func (ctrl *controlController) SetTransmitState(w http.ResponseWriter, r *http.R
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
-	if err != nil {
-		ctrl.responseSetTransmitState400(w, err)
-	}
-	httpapi.WriteCustomJSONResponse(w, 200, data)
-
+	ctrl.responseSetTransmitState500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseSetTransmitState400(w http.ResponseWriter, rsp_err error) {
@@ -113,10 +117,19 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetLinkState400(w, bodyError)
+		ctrl.responseSetLinkState500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SetLinkState(item, r)
+	if result.HasStatusCode200() {
+		data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetLinkState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
+
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -125,12 +138,7 @@ func (ctrl *controlController) SetLinkState(w http.ResponseWriter, r *http.Reque
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
-	if err != nil {
-		ctrl.responseSetLinkState400(w, err)
-	}
-	httpapi.WriteCustomJSONResponse(w, 200, data)
-
+	ctrl.responseSetLinkState500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseSetLinkState400(w http.ResponseWriter, rsp_err error) {
@@ -166,10 +174,19 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetCaptureState400(w, bodyError)
+		ctrl.responseSetCaptureState500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SetCaptureState(item, r)
+	if result.HasStatusCode200() {
+		data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetCaptureState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
+
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -178,12 +195,7 @@ func (ctrl *controlController) SetCaptureState(w http.ResponseWriter, r *http.Re
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
-	if err != nil {
-		ctrl.responseSetCaptureState400(w, err)
-	}
-	httpapi.WriteCustomJSONResponse(w, 200, data)
-
+	ctrl.responseSetCaptureState500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseSetCaptureState400(w http.ResponseWriter, rsp_err error) {
@@ -219,10 +231,14 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseUpdateFlows400(w, bodyError)
+		ctrl.responseUpdateFlows500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.UpdateFlows(item, r)
+	if result.HasStatusCode200() {
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -231,7 +247,7 @@ func (ctrl *controlController) UpdateFlows(w http.ResponseWriter, r *http.Reques
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+	ctrl.responseUpdateFlows500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseUpdateFlows400(w http.ResponseWriter, rsp_err error) {
@@ -267,10 +283,19 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetRouteState400(w, bodyError)
+		ctrl.responseSetRouteState500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SetRouteState(item, r)
+	if result.HasStatusCode200() {
+		data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetRouteState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
+
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -279,12 +304,7 @@ func (ctrl *controlController) SetRouteState(w http.ResponseWriter, r *http.Requ
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
-	if err != nil {
-		ctrl.responseSetRouteState400(w, err)
-	}
-	httpapi.WriteCustomJSONResponse(w, 200, data)
-
+	ctrl.responseSetRouteState500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseSetRouteState400(w http.ResponseWriter, rsp_err error) {
@@ -320,10 +340,14 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSendPing400(w, bodyError)
+		ctrl.responseSendPing500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SendPing(item, r)
+	if result.HasStatusCode200() {
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -332,7 +356,7 @@ func (ctrl *controlController) SendPing(w http.ResponseWriter, r *http.Request) 
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+	ctrl.responseSendPing500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseSendPing400(w http.ResponseWriter, rsp_err error) {
@@ -368,10 +392,19 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetProtocolState400(w, bodyError)
+		ctrl.responseSetProtocolState500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.SetProtocolState(item, r)
+	if result.HasStatusCode200() {
+		data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
+		if err != nil {
+			ctrl.responseSetProtocolState400(w, err)
+		}
+		httpapi.WriteCustomJSONResponse(w, 200, data)
+
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -380,12 +413,7 @@ func (ctrl *controlController) SetProtocolState(w http.ResponseWriter, r *http.R
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
-	if err != nil {
-		ctrl.responseSetProtocolState400(w, err)
-	}
-	httpapi.WriteCustomJSONResponse(w, 200, data)
-
+	ctrl.responseSetProtocolState500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *controlController) responseSetProtocolState400(w http.ResponseWriter, rsp_err error) {

@@ -54,10 +54,14 @@ func (ctrl *metricsController) GetMetrics(w http.ResponseWriter, r *http.Request
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseGetMetrics400(w, bodyError)
+		ctrl.responseGetMetrics500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.GetMetrics(item, r)
+	if result.HasStatusCode200() {
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -66,7 +70,7 @@ func (ctrl *metricsController) GetMetrics(w http.ResponseWriter, r *http.Request
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+	ctrl.responseGetMetrics500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *metricsController) responseGetMetrics400(w http.ResponseWriter, rsp_err error) {

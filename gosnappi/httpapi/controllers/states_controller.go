@@ -54,10 +54,14 @@ func (ctrl *statesController) GetStates(w http.ResponseWriter, r *http.Request) 
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseGetStates400(w, bodyError)
+		ctrl.responseGetStates500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.GetStates(item, r)
+	if result.HasStatusCode200() {
+		httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -66,7 +70,7 @@ func (ctrl *statesController) GetStates(w http.ResponseWriter, r *http.Request) 
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteJSONResponse(w, 200, result.StatusCode200())
+	ctrl.responseGetStates500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *statesController) responseGetStates400(w http.ResponseWriter, rsp_err error) {

@@ -54,10 +54,14 @@ func (ctrl *captureController) GetCapture(w http.ResponseWriter, r *http.Request
 		}
 	} else {
 		bodyError := errors.New("Request do not have any body")
-		ctrl.responseGetCapture400(w, bodyError)
+		ctrl.responseGetCapture500(w, bodyError)
 		return
 	}
 	result := ctrl.handler.GetCapture(item, r)
+	if result.HasStatusCode200() {
+		httpapi.WriteByteResponse(w, 200, result.StatusCode200())
+		return
+	}
 	if result.HasStatusCode400() {
 		httpapi.WriteJSONResponse(w, 400, result.StatusCode400())
 		return
@@ -66,7 +70,7 @@ func (ctrl *captureController) GetCapture(w http.ResponseWriter, r *http.Request
 		httpapi.WriteJSONResponse(w, 500, result.StatusCode500())
 		return
 	}
-	httpapi.WriteByteResponse(w, 200, result.StatusCode200())
+	ctrl.responseGetCapture500(w, errors.New("Unknown error"))
 }
 
 func (ctrl *captureController) responseGetCapture400(w http.ResponseWriter, rsp_err error) {
