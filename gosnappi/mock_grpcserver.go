@@ -2,6 +2,7 @@ package gosnappi
 
 import (
 	context "context"
+	"fmt"
 	log "log"
 	net "net"
 	"reflect"
@@ -127,9 +128,14 @@ func getRouteNames(cfg *otg.Config) []string {
 
 func isFlowMetricsDisabled(cfg *otg.Config) []string {
 	names := []string{}
-	for _, flow := range cfg.Flows {
-		if flow.Metrics == nil || !*flow.Metrics.Enable {
-			names = append(names, flow.Name)
+	fmt.Println("cfg : ", cfg)
+	if cfg != nil {
+		if cfg.Flows != nil {
+			for _, flow := range cfg.Flows {
+				if flow.Metrics == nil || !*flow.Metrics.Enable {
+					names = append(names, flow.Name)
+				}
+			}
 		}
 	}
 	return names
