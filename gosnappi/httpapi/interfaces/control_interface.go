@@ -17,7 +17,6 @@ type ControlController interface {
 	SetRouteState(w http.ResponseWriter, r *http.Request)
 	SendPing(w http.ResponseWriter, r *http.Request)
 	SetProtocolState(w http.ResponseWriter, r *http.Request)
-	SetAction(w http.ResponseWriter, r *http.Request)
 }
 
 type ControlHandler interface {
@@ -58,9 +57,4 @@ type ControlHandler interface {
 		Description: Sets all configured protocols to `start` or `stop` state.
 	*/
 	SetProtocolState(rbody gosnappi.ProtocolState, r *http.Request) gosnappi.SetProtocolStateResponse
-	/*
-		SetAction: POST /control/actions
-		Description: Set specific action/trigger on configuration resources on the traffic generator.
-	*/
-	SetAction(rbody gosnappi.ActionRequest, r *http.Request) gosnappi.SetActionResponse
 }

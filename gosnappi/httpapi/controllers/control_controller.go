@@ -30,7 +30,6 @@ func (ctrl *controlController) Routes() []httpapi.Route {
 		{Path: "/control/routes", Method: "POST", Name: "SetRouteState", Handler: ctrl.SetRouteState},
 		{Path: "/control/ping", Method: "POST", Name: "SendPing", Handler: ctrl.SendPing},
 		{Path: "/control/protocols", Method: "POST", Name: "SetProtocolState", Handler: ctrl.SetProtocolState},
-		{Path: "/control/actions", Method: "POST", Name: "SetAction", Handler: ctrl.SetAction},
 	}
 }
 
@@ -478,71 +477,6 @@ func (ctrl *controlController) responseSetProtocolState400(w http.ResponseWriter
 
 func (ctrl *controlController) responseSetProtocolState500(w http.ResponseWriter, rsp_err error) {
 	result := gosnappi.NewSetProtocolStateResponse()
-	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
-	if _, err := httpapi.WriteJSONResponse(w, 500, result.StatusCode500()); err != nil {
-		log.Print(err.Error())
-	}
-}
-
-/*
-SetAction: POST /control/actions
-Description: Set specific action/trigger on configuration resources on the traffic generator.
-*/
-func (ctrl *controlController) SetAction(w http.ResponseWriter, r *http.Request) {
-	var item gosnappi.ActionRequest
-	if r.Body != nil {
-		body, readError := ioutil.ReadAll(r.Body)
-		if body != nil {
-			item = gosnappi.NewActionRequest()
-			err := item.FromJson(string(body))
-			if err != nil {
-				ctrl.responseSetAction400(w, err)
-				return
-			}
-		} else {
-			ctrl.responseSetAction400(w, readError)
-			return
-		}
-	} else {
-		bodyError := errors.New("Request do not have any body")
-		ctrl.responseSetAction500(w, bodyError)
-		return
-	}
-	result := ctrl.handler.SetAction(item, r)
-	if result.HasStatusCode200() {
-		data, err := controlMrlOpts.Marshal(result.StatusCode200().Msg())
-		if err != nil {
-			ctrl.responseSetAction400(w, err)
-		}
-		httpapi.WriteCustomJSONResponse(w, 200, data)
-
-		return
-	}
-	if result.HasStatusCode400() {
-		if _, err := httpapi.WriteJSONResponse(w, 400, result.StatusCode400()); err != nil {
-			log.Print(err.Error())
-		}
-		return
-	}
-	if result.HasStatusCode500() {
-		if _, err := httpapi.WriteJSONResponse(w, 500, result.StatusCode500()); err != nil {
-			log.Print(err.Error())
-		}
-		return
-	}
-	ctrl.responseSetAction500(w, errors.New("Unknown error"))
-}
-
-func (ctrl *controlController) responseSetAction400(w http.ResponseWriter, rsp_err error) {
-	result := gosnappi.NewSetActionResponse()
-	result.StatusCode400().SetErrors([]string{rsp_err.Error()})
-	if _, err := httpapi.WriteJSONResponse(w, 400, result.StatusCode400()); err != nil {
-		log.Print(err.Error())
-	}
-}
-
-func (ctrl *controlController) responseSetAction500(w http.ResponseWriter, rsp_err error) {
-	result := gosnappi.NewSetActionResponse()
 	result.StatusCode500().SetErrors([]string{rsp_err.Error()})
 	if _, err := httpapi.WriteJSONResponse(w, 500, result.StatusCode500()); err != nil {
 		log.Print(err.Error())
