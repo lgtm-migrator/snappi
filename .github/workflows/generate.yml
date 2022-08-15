@@ -16,20 +16,20 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           submodules: recursive
-      # - name: Set up Python ${{ matrix.python-version }}
-      #   uses: actions/setup-python@v2
-      #   with:
-      #     python-version: ${{ matrix.python-version }}
-      # - name: Setup Go and protoc
-      #   run: |
-      #     python do.py setup_ext
-      # - name: Install dependencies
-      #   run: |
-      #     python do.py setup
-      #     python do.py init
-      # - name: Build distribution
-      #   run: |
-      #     python do.py dist
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup Go and protoc
+        run: |
+          python do.py setup_ext
+      - name: Install dependencies
+        run: |
+          python do.py setup
+          python do.py init
+      - name: Build distribution
+        run: |
+          python do.py dist
       # - name: Commit go pkg
       #   id: get_sha
       #   run: |
@@ -44,20 +44,20 @@ jobs:
       #         echo "No change in auto generated go snappi"
       #     fi
       #     echo "::set-output name=sha::$(git rev-parse HEAD)"
-      # - name: storing get_sha in file
-      #   run: |
-      #     echo "${{ steps.get_sha.outputs.sha }}" > store_sha_file
-      # - name: Archive generated artifacts
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: generated-artifacts
-      #     path: |
-      #       dist
-      #       snappi
-      #       gosnppi
-      #       models-release
-      #       *.proto
-      #       store_sha_file
+      - name: storing get_sha in file
+        run: |
+          echo "${{ steps.get_sha.outputs.sha }}" > store_sha_file
+      - name: Archive generated artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: generated-artifacts
+          path: |
+            dist
+            snappi
+            gosnppi
+            models-release
+            *.proto
+            store_sha_file
 
   python_tests:
     needs: build
