@@ -19,9 +19,7 @@ with open(os.path.join(base_dir, "readme.md")) as fd:
     long_description = fd.read()
 
 # download openapi.yaml
-openapi_url = "https://github.com/open-traffic-generator/models/releases/download/v{version}/openapi.yaml".format(
-    version=models_version
-)
+openapi_url = "https://raw.githubusercontent.com/open-traffic-generator/models/field_uid/artifacts/openapi.yaml"
 response = requests.request("GET", openapi_url, allow_redirects=True)
 assert response.status_code == 200
 with open(os.path.join("openapi.yaml"), "wb") as fp:
