@@ -18,17 +18,17 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(base_dir, "readme.md")) as fd:
     long_description = fd.read()
 
-# download openapi.yaml
-openapi_url = "https://github.com/open-traffic-generator/models/releases/download/v{version}/openapi.yaml".format(
-    version=models_version
-)
-response = requests.request("GET", openapi_url, allow_redirects=True)
-assert response.status_code == 200
-with open(os.path.join("openapi.yaml"), "wb") as fp:
-    fp.write(response.content)
+# # download openapi.yaml
+# openapi_url = "https://github.com/open-traffic-generator/models/releases/download/v{version}/openapi.yaml".format(
+#     version=models_version
+# )
+# response = requests.request("GET", openapi_url, allow_redirects=True)
+# assert response.status_code == 200
+# with open(os.path.join("openapi.yaml"), "wb") as fp:
+#     fp.write(response.content)
 
 openapiart.OpenApiArt(
-    api_files=["openapi.yaml"],
+    api_files=["C:/Users/alakjana/Downloads/openapi.yaml"],
     protobuf_name=model_protobuf_name,
     artifact_dir="artifacts",
     extension_prefix=pkg_name,
